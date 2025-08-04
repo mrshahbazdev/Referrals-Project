@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CodeShack</title>
+    <title>@yield('title', $settings['site_name'] ?? 'CodeShack')</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Phosphor Icons CDN -->
@@ -18,6 +18,7 @@
             background-color: #111827;
         }
     </style>
+    {!! $settings['header_scripts'] ?? '' !!}
 </head>
 <body class="flex items-center justify-center min-h-screen">
 

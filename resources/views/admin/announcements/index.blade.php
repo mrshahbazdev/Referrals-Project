@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Announcements</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+@extends('admin.layouts.app')
+
+@section('title', 'Announcements Management')
+
+@push('styles')
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
@@ -79,39 +75,8 @@
             table td::before { content: attr(data-label); font-weight: 600; text-align: left; margin-right: 1rem; color: var(--text-primary); }
         }
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <div class="mobile-overlay" id="mobileOverlay"></div>
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <i class="ph-bold ph-shield-check icon"></i>
-                <h2>Admin Panel</h2>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="{{ route('admin.dashboard') }}"><i class="ph ph-gauge"></i> Dashboard</a></li>
-                    <li><a href="{{ route('admin.users.index') }}"><i class="ph ph-users"></i> User Management</a></li>
-                    <li><a href="{{ route('admin.levels.index') }}"><i class="ph ph-stairs"></i> Level Management</a></li>
-                    <li><a href="{{ route('admin.tasks.index') }}"><i class="ph ph-list-checks"></i> Task Management</a></li>
-                    <li><a href="{{ route('admin.kyc.index') }}"><i class="ph ph-identification-card"></i> KYC Submissions</a></li>
-                    <li><a href="{{ route('admin.investments.index') }}"><i class="ph ph-chart-line-up"></i> Investment Requests</a></li>
-                    <li><a href="{{ route('admin.withdrawals.index') }}"><i class="ph ph-arrow-circle-down"></i> Withdrawal Requests</a></li>
-                    <li><a href="{{ route('admin.announcements.index') }}" class="active"><i class="ph ph-megaphone"></i> Announcements</a></li>
-                    <li><a href="{{ route('admin.activity_logs.index') }}"><i class="ph ph-list-dashes"></i> Admin Log</a></li>
-                    <li><a href="{{ route('admin.user_activity.index') }}"><i class="ph ph-user-list"></i> User Log</a></li>
-                </ul>
-            </nav>
-            <div class="logout-section">
-                <form method="POST" action="{{ route('logout') }}" class="logout-form">
-                    @csrf
-                    <button type="submit"><a class="logout-link"><i class="ph ph-sign-out"></i> Logout</a></button>
-                </form>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
+@endpush
+@section('content')
         <main class="main-content">
             <header class="main-header">
                 <button class="mobile-nav-toggle" id="mobileNavToggle"><i class="ph ph-list"></i></button>
@@ -129,30 +94,57 @@
             @endif
 
             <div class="table-container">
-                <table>
-                    <thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($announcements as $announcement)
                         <tr>
-                            <th>Title</th><th>Content</th><th>Created At</th><th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($announcements as $announcement)
-                            <tr>
-                                <td data-label="Title">{{ $announcement->title }}</td>
-                                <td data-label="Content">{{ Str::limit($announcement->content, 50) }}</td>
-                                <td data-label="Created At">{{ $announcement->created_at->format('d M, Y') }}</td>
-                                <td data-label="Actions">
+                            <td data-label="Title">{{ $announcement->title }}</td>
+                            <td data-label="Content">{{ Str::limit($announcement->content, 50) }}</td>
+                            <td data-label="Status">
+                                @if($announcement->is_active)
+                                    <span class="status-badge status-approved">Active</span>
+                                @else
+                                    <span class="status-badge status-rejected">Inactive</span>
+                                @endif
+                            </td>
+                            <td data-label="Created At">{{ $announcement->created_at->format('d M, Y') }}</td>
+                            <td data-label="Actions">
+                                <div class="flex items-center gap-2">
+                                    <!-- Toggle Status Button -->
+                                    <form action="{{ route('admin.announcements.toggle', $announcement) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="action-btn" title="{{ $announcement->is_active ? 'Deactivate' : 'Activate' }}">
+                                            @if($announcement->is_active)
+                                                <i class="ph ph-toggle-right text-3xl text-green-400"></i>
+                                            @else
+                                                <i class="ph ph-toggle-left text-3xl text-gray-500"></i>
+                                            @endif
+                                        </button>
+                                    </form>
+
                                     <button class="action-btn edit-btn" data-announcement='@json($announcement)'><i class="ph ph-pencil-simple" style="color: var(--accent-color);"></i></button>
                                     <button class="action-btn delete-btn" data-id="{{ $announcement->id }}"><i class="ph ph-trash" style="color: var(--red);"></i></button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="4" style="text-align: center; padding: 2rem;">No announcements found.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div class="pagination-links">{{ $announcements->links('vendor.pagination.custom-tailwind') }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" style="text-align: center;">No announcements found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+            <div class="pagination-links">{{ $announcements->links() }}</div>
         </main>
     </div>
 
@@ -191,7 +183,8 @@
             </form>
         </div>
     </div>
-
+@endsection
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Mobile navigation toggle
@@ -256,5 +249,5 @@
             });
         });
     </script>
-</body>
-</html>
+</script>
+@endpush

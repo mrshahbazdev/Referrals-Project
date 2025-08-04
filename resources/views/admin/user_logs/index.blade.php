@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Activity Log</title>
-    <!-- Is page mein aap dashboard wala CSS istemal kar sakte hain -->
+@extends('admin.layouts.app')
+
+@section('title', 'User Management')
+
+@push('styles')
     <style>
         /* Aap apne dashboard se styles copy kar sakte hain */
         body { font-family: sans-serif; background-color: #111827; color: #f1f5f9; }
@@ -16,12 +15,8 @@
         th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #334155; }
         th { background-color: #334155; }
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <aside class="sidebar"> ... </aside>
-
-        <main class="main-content">
+@endpush
+@section('content')
             <header class="main-header"><h1>User Activity Log</h1></header>
             <div class="table-container">
                 <table>
@@ -50,5 +45,4 @@
             <div class="pagination-links">{{ $logs->links() }}</div>
         </main>
     </div>
-</body>
-</html>
+    @endsection

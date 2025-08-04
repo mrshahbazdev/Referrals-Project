@@ -23,7 +23,8 @@ class LevelController extends Controller
             'name' => 'required|string|max:50|unique:levels',
             'upgrade_cost' => 'required|numeric|min:0',
             'daily_task_limit' => 'required|integer|min:0',
-            'icon' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate the icon
+            'weekly_withdrawal_limit' => 'required|numeric|min:0',
+            'icon' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $data = $request->all();
@@ -51,13 +52,13 @@ class LevelController extends Controller
             'name' => 'required|string|max:50|unique:levels,name,' . $level->id,
             'upgrade_cost' => 'required|numeric|min:0',
             'daily_task_limit' => 'required|integer|min:0',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Icon is optional on update
+            'weekly_withdrawal_limit' => 'required|numeric|min:0',
+            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $data = $request->all();
 
         if ($request->hasFile('icon')) {
-            // Delete the old icon if it exists
             if ($level->icon_url) {
                 Storage::disk('public')->delete($level->icon_url);
             }

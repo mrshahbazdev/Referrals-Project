@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Requests</title>
-    <!-- Add your CSS links and styles here, similar to other admin pages -->
+@extends('admin.layouts.app')
+
+@section('title', 'Investment Management')
+
+@push('styles')
     <style>
         :root {
             --bg-dark: #111827; --sidebar-bg: #1E293B; --card-bg: #1E293B;
@@ -28,13 +26,9 @@
         .action-form { display: inline-flex; gap: 0.5rem; }
         .action-form button { border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <!-- Add your full sidebar here -->
-        <aside class="sidebar"> ... </aside>
+@endpush
 
-        <main class="main-content">
+@section('content')
             <header class="main-header"><h1>Investment Requests</h1></header>
 
             @if (session('success'))
@@ -50,7 +44,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>User</th><th>Amount</th><th>Transaction Proof</th><th>Status</th><th>Actions</th>
+                            <th>User</th>
+                            <th>Amount</th>
+                            <th>Transaction Proof</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +60,7 @@
                                 <td data-label="Transaction Proof">
                                     <a href="{{ asset('storage/' . $request->transaction_id_image_url) }}" target="_blank" style="color: var(--accent-color);">View Proof</a>
                                 </td>
+                                <td data-label="Date">{{ $request->created_at->format('d M, Y') }}</td>
                                 <td data-label="Status">
                                     <span class="status-badge status-{{ $request->status }}">{{ $request->status }}</span>
                                 </td>
@@ -86,13 +86,13 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" style="text-align: center;">No investment requests found.</td></tr>
+                            <tr><td colspan="6" style="text-align: center;">No investment requests found.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
             <div class="pagination-links">{{ $requests->links() }}</div>
         </main>
     </div>
-</body>
-</html>
+    @endsection

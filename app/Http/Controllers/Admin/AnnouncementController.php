@@ -34,7 +34,24 @@ class AnnouncementController extends Controller
 
         return back()->with('success', 'Announcement created successfully.');
     }
+    public function toggleStatus(Announcement $announcement)
+    {
+        // Status ko tabdeel karein (true se false, false se true)
+        $announcement->is_active = !$announcement->is_active;
+        $announcement->save();
 
+        $status = $announcement->is_active ? 'Activated' : 'Deactivated';
+
+        // Activity log karein
+        AdminActivityLog::create([
+            'admin_id' => Auth::id(),
+            'log_type' => 'Announcements',
+            'action' => 'Status Changed',
+            'description' => "Admin {$status} announcement: " . $announcement->title,
+        ]);
+
+        return back()->with('success', 'Announcement status updated successfully.');
+    }
     public function update(Request $request, Announcement $announcement)
     {
         $request->validate([

@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+@extends('admin.layouts.app')
+
+@section('title', 'Level Management')
+
+@push('styles')
     <style>
         :root {
             --bg-dark: #111827; --sidebar-bg: #1E293B; --card-bg: #1E293B;
@@ -125,44 +120,8 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <!-- Add your full sidebar here -->
-        <div class="mobile-overlay" id="mobileOverlay"></div>
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <i class="ph-bold ph-shield-check icon"></i>
-                <h2>Admin Panel</h2>
-            </div>
-
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="{{ route('admin.dashboard') }}" class="active"><i class="ph ph-gauge"></i> Dashboard</a></li>
-                    <li><a href="{{ route('admin.users.index') }}"><i class="ph ph-users"></i> User Management</a></li>
-                    <li><a href="#"><i class="ph ph-identification-card"></i> KYC Submissions</a></li>
-                    <li><a href="#"><i class="ph ph-chart-line-up"></i> Investment Requests</a></li>
-                    <li><a href="#"><i class="ph ph-arrow-circle-down"></i> Withdrawal Requests</a></li>
-                    <li><a href="#"><i class="ph ph-list-checks"></i> Task Management</a></li>
-                    <li><a href="{{ route('admin.levels.index') }}"><i class="ph ph-stairs"></i> Level Management</a></li>
-                    <li><a href="#"><i class="ph ph-megaphone"></i> Announcements</a></li>
-                    <li><a href="{{ route('admin.activity_logs.index') }}"><i class="ph ph-list-dashes"></i> Activity Log</a></li>
-                    <li><a href="{{ route('admin.user_activity.index') }}"><i class="ph ph-user-list"></i> User Log</a></li>
-                </ul>
-            </nav>
-
-            <!-- Logout Button -->
-            <div class="logout-section">
-                <form method="POST" action="{{ route('logout') }}" class="logout-form">
-                    @csrf
-                    <button type="submit">
-                        <a class="logout-link"><i class="ph ph-sign-out"></i> Logout</a>
-                    </button>
-                </form>
-            </div>
-        </aside>
-
-        <main class="main-content">
+@endpush
+@section('content')
             <header class="main-header">
                 <button class="mobile-nav-toggle" id="mobileNavToggle"><i class="ph ph-list"></i></button>
                 <h1>Level Management</h1>
@@ -225,6 +184,10 @@
                 <div class="form-group"><label for="upgrade_cost">Upgrade Cost</label><input type="number" step="0.01" id="upgrade_cost" name="upgrade_cost" required></div>
                 <div class="form-group"><label for="daily_task_limit">Daily Task Limit</label><input type="number" id="daily_task_limit" name="daily_task_limit" required></div>
                 <div class="form-group"><label for="icon">Level Icon</label><input type="file" id="icon" name="icon" accept="image/*"></div>
+                <div class="form-group">
+                    <label for="weekly_withdrawal_limit">Weekly Withdrawal Limit ($)</label>
+                    <input type="number" step="0.01" id="weekly_withdrawal_limit" name="weekly_withdrawal_limit" required>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary close-modal-btn">Cancel</button>
                     <button type="submit" class="btn-primary">Save Level</button>
@@ -251,7 +214,7 @@
             </form>
         </div>
     </div>
-
+    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const mobileNavToggle = document.getElementById('mobileNavToggle');
@@ -295,6 +258,7 @@
                     document.getElementById('name').value = level.name;
                     document.getElementById('upgrade_cost').value = level.upgrade_cost;
                     document.getElementById('daily_task_limit').value = level.daily_task_limit;
+                    document.getElementById('weekly_withdrawal_limit').value = level.weekly_withdrawal_limit;
                     levelModal.classList.add('active');
                 });
             });
@@ -315,5 +279,5 @@
             });
         });
     </script>
-</body>
-</html>
+    @endpush
+@endsection

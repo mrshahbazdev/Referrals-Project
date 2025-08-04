@@ -9,9 +9,18 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'amount', 'type', 'description'];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',
+        'amount',
+        'type',
+        'description',
+    ];
 
-    // Yeh transaction kis user ki hai
     public function user()
     {
         return $this->belongsTo(User::class);

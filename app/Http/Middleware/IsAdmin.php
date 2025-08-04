@@ -11,7 +11,9 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Check karein ke 'admin' guard se user logged in hai aur uska role 'admin' hai
+        if (Auth::check() && Auth::user()->role === 'admin') {
+            return $next($request);
+        }
         if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin') {
             return $next($request);
         }

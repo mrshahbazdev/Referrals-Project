@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KYC Management</title>
-    <!-- Add your CSS links and styles here, similar to other admin pages -->
+@extends('admin.layouts.app')
+
+@section('title', 'Kyc Management')
+
+@push('styles')
     <style>
         :root {
             --bg-dark: #111827; --sidebar-bg: #1E293B; --card-bg: #1E293B;
@@ -28,13 +26,8 @@
         .action-form { display: inline-flex; gap: 0.5rem; }
         .action-form button { border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <!-- Add your full sidebar here -->
-        <aside class="sidebar"> ... </aside>
-
-        <main class="main-content">
+@endpush
+@section('content')
             <header class="main-header"><h1>KYC Submissions</h1></header>
 
             @if (session('success'))
@@ -56,7 +49,8 @@
                                 <td data-label="ID Number">{{ $submission->id_card_number }}</td>
                                 <td data-label="Documents">
                                     <a href="{{ asset('storage/' . $submission->id_card_front_url) }}" target="_blank">Front</a> |
-                                    <a href="{{ asset('storage/' . $submission->id_card_back_url) }}" target="_blank">Back</a>
+                                    <a href="{{ asset('storage/' . $submission->id_card_back_url) }}" target="_blank">Back</a> |
+                                    <a href="{{ asset('storage/' . $submission->face_image_url) }}" target="_blank">Face</a>
                                 </td>
                                 <td data-label="Status">
                                     <span class="status-badge status-{{ $submission->status }}">{{ $submission->status }}</span>
@@ -91,5 +85,4 @@
             <div class="pagination-links">{{ $submissions->links() }}</div>
         </main>
     </div>
-</body>
-</html>
+@endsection

@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+@extends('admin.layouts.app')
 
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+@section('title', 'Dashboard Management')
 
-    <!-- Phosphor Icons CDN -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
-    <!-- Chart.js CDN -->
+@push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+@endpush
+@push('styles')
+
 
     <style>
         :root {
@@ -185,45 +178,9 @@
         }
 
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <i class="ph-bold ph-shield-check icon"></i>
-                <h2>Admin Panel</h2>
-            </div>
-
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="{{ route('admin.dashboard') }}" class="active"><i class="ph ph-gauge"></i> Dashboard</a></li>
-                    <li><a href="{{ route('admin.users.index') }}"><i class="ph ph-users"></i> User Management</a></li>
-                    <li><a href="{{ route('admin.kyc.index') }}"><i class="ph ph-identification-card"></i> KYC Submissions</a></li>
-                    <li><a href="{{ route('admin.investments.index') }}"><i class="ph ph-chart-line-up"></i> Investment Requests</a></li>
-                    <li><a href="{{ route('admin.withdrawals.index') }}"><i class="ph ph-arrow-circle-down"></i> Withdrawal Requests</a></li>
-                    <li><a href="{{ route('admin.tasks.index') }}"><i class="ph ph-list-checks"></i> Task Management</a></li>
-                    <li><a href="{{ route('admin.levels.index') }}"><i class="ph ph-stairs"></i> Level Management</a></li>
-                    <li><a href="{{ route('admin.announcements.index') }}"><i class="ph ph-megaphone"></i> Announcements</a></li>
-                    <li><a href="{{ route('admin.activity_logs.index') }}"><i class="ph ph-list-dashes"></i> Activity Log</a></li>
-                    <li><a href="{{ route('admin.user_activity.index') }}"><i class="ph ph-user-list"></i> User Log</a></li>
-                </ul>
-            </nav>
-
-            <!-- Logout Button -->
-            <div class="logout-section">
-                <form method="POST" action="{{ route('logout') }}" class="logout-form">
-                    @csrf
-                    <button type="submit">
-                        <a class="logout-link"><i class="ph ph-sign-out"></i> Logout</a>
-                    </button>
-                </form>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="main-header">
+@endpush
+@section('content')
+<header class="main-header">
                 <h1>Dashboard</h1>
                 <div class="admin-profile">
                     <span>Welcome, {{ Auth::user()->username }}</span>
@@ -268,6 +225,8 @@
             </div>
         </main>
     </div>
+    @push('scripts')
+
 
     <script>
         const ctx = document.getElementById('registrationsChart');
@@ -309,5 +268,6 @@
             }
         });
     </script>
-</body>
-</html>
+@endpush
+@endsection
+

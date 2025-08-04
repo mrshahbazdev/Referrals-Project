@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
-class User extends Authenticatable
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -24,6 +24,7 @@ class User extends Authenticatable
         'referred_by_id',
         'level_id',
         'kyc_status',
+        'role',
     ];
 
     protected $hidden = [
@@ -58,5 +59,19 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+    public function isEligibleForWithdrawal(): bool
+    {
+        // Check karein ke KYC approved hai
+        if ($this->kyc_status !== 'approved') {
+            return false;
+        }
+
+        // Check karein ke zaroori profile fields pur (filled) hain
+        if (empty($this->first_name) || empty($this->last_name) || empty($this->address) || empty($this->mobile_number)) {
+            return false;
+        }
+
+        return true;
     }
 }

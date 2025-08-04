@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Activity Log</title>
-    <!-- You can use the styles from your dashboard on this page -->
+@extends('admin.layouts.app')
+
+@section('title', 'Log Management')
+
+@push('styles')
     <style>
         :root { --bg-dark: #111827; --sidebar-bg: #1E293B; --card-bg: #1E293B; --text-primary: #f1f5f9; --text-secondary: #94a3b8; --accent-color: #facc15; --border-color: #334155; }
         body { font-family: sans-serif; background-color: var(--bg-dark); color: var(--text-primary); }
@@ -47,13 +46,8 @@
             cursor: not-allowed;
         }
     </style>
-</head>
-<body>
-    <div class="dashboard-layout">
-        <!-- Add your full sidebar here -->
-        <aside class="sidebar"> ... </aside>
-
-        <main class="main-content">
+@endpush
+@section('content')
             <header class="main-header"><h1>Admin Activity Log</h1></header>
 
             <div class="log-tabs">
@@ -91,5 +85,4 @@
             <div class="pagination-links">{{ $logs->links() }}</div>
         </main>
     </div>
-</body>
-</html>
+    @endsection

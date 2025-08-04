@@ -17,46 +17,46 @@ class WithdrawalController extends Controller
         return view('admin.withdrawals.index', compact('requests'));
     }
 
-    public function update(Request $request, WithdrawalRequest $withdrawalRequest)
+    public function update(Request $request, \App\Models\WithdrawalRequest $withdrawalRequest)
     {
         $request->validate([
             'status' => 'required|in:approved,rejected',
         ]);
 
-        // Prevent updating non-pending requests
         if ($withdrawalRequest->status !== 'pending') {
             return back()->withErrors('This request has already been processed.');
         }
 
         $user = $withdrawalRequest->user;
+        $newStatus = $request->status;
 
-        // If approved, check if the user has sufficient balance
-        if ($request->status == 'approved') {
-            if (!$user || $user->balance < $withdrawalRequest->amount) {
-                return back()->withErrors('User has insufficient balance for this withdrawal.');
-            }
-            // Deduct balance from the user
-            $user->balance -= $withdrawalRequest->amount;
+        // **Case 1: Agar request REJECT ho jaye**
+        if ($newStatus == 'rejected') {
+            // Kaati hui raqam user ke balance mein wapas daal dein
+            $user->balance += $withdrawalRequest->amount;
             $user->save();
 
-            // Create a transaction record for the user
-            Transaction::create([
+            // User ke liye "Refund" ka transaction record banayein
+            \App\Models\Transaction::create([
                 'user_id' => $user->id,
-                'amount' => -$withdrawalRequest->amount, // Store as a negative value
-                'type' => 'withdrawal',
-                'description' => 'Withdrawal approved by admin.',
+                'amount' => $withdrawalRequest->amount, // Raqam ko positive mein save karein
+                'type' => 'refund', // Hum is nayi type ko istemal kar sakte hain
+                'description' => 'Withdrawal request rejected. Amount refunded.',
             ]);
         }
 
-        // Update the request status
-        $withdrawalRequest->update(['status' => $request->status]);
+        // **Case 2: Agar request APPROVE ho jaye**
+        // Humein kuch karne ki zaroorat nahi, kyunke balance pehle hi cut chuka hai.
 
-        // Log the admin activity
-        AdminActivityLog::create([
+        // Request ka status update karein
+        $withdrawalRequest->update(['status' => $newStatus]);
+
+        // Admin ki activity log karein
+        \App\Models\AdminActivityLog::create([
             'admin_id' => Auth::id(),
             'log_type' => 'Withdrawal Management',
             'action' => 'Withdrawal Status Updated',
-            'description' => 'Admin ' . $request->status . ' withdrawal of $' . $withdrawalRequest->amount . ' for user: ' . $user->username,
+            'description' => 'Admin ' . $newStatus . ' withdrawal of $' . $withdrawalRequest->amount . ' for user: ' . $user->username,
         ]);
 
         return back()->with('success', 'Withdrawal status updated successfully.');
